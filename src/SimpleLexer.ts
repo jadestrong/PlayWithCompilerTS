@@ -75,6 +75,10 @@ export class SimpleLexer {
             newState = DfaState.Minus;
             token.type = TokenType.Minus;
             this.tokenText.push(ch);
+        } else if (ch === '*') {
+            newState = DfaState.Star;
+            token.type = TokenType.Star;
+            this.tokenText.push(ch);
         } else if (ch === '/') {
             newState = DfaState.Slash;
             token.type = TokenType.Slash;
@@ -117,7 +121,6 @@ export class SimpleLexer {
                         state = this.initToken(ch);
                         break;
                     case DfaState.Id:
-                        console.log('Id1', ch);
                         if (this.isAlpha(ch) || this.isDigit(ch)) {
                             this.tokenText.push(ch);
                         } else {
