@@ -199,6 +199,10 @@ export class SimpleLexer {
     }
 }
 
+/**
+ * 逐个字符生成器
+ * @param code
+ */
 function *createStringIterator(code: string) {
     for (let c of code) {
         yield c;

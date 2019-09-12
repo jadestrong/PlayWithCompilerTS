@@ -159,21 +159,48 @@ export class SimpleCalculator {
      * @return
      * @throws Error
      */
-    private additive(tokens: TokenReader): SimpleASTNode | undefined {
-        const child1 = this.multiplicative(tokens);
-        let node = child1;
+    // private additive2(tokens: TokenReader): SimpleASTNode | undefined {
+    //     const child1 = this.multiplicative(tokens);
+    //     let node = child1;
 
-        let token = tokens.peek();
-        if (child1 !== undefined && token !== null) {
-            if (token.getType() === TokenType.Plus || token.getType() === TokenType.Minus) {
-                token = tokens.read();
-                let child2 = this.additive(tokens);
-                if (child2 !== undefined) {
-                    node = new SimpleASTNode(ASTNodeType.Additive, token!.getText());
-                    node.addChild(child1);
-                    node.addChild(child2);
+    //     let token = tokens.peek();
+    //     if (child1 !== undefined && token !== null) {
+    //         if (token.getType() === TokenType.Plus || token.getType() === TokenType.Minus) {
+    //             token = tokens.read();
+    //             let child2 = this.additive(tokens);
+    //             if (child2 !== undefined) {
+    //                 node = new SimpleASTNode(ASTNodeType.Additive, token!.getText());
+    //                 node.addChild(child1);
+    //                 node.addChild(child2);
+    //             } else {
+    //                 throw new Error('invalid additive expression, expecting the right part.');
+    //             }
+    //         }
+    //     }
+    //     return node;
+    // }
+    /**
+     * 采用尾递归解决结合性错误的问题
+     * @return
+     * @throws Error
+     */
+    private additive(tokens: TokenReader): SimpleASTNode | undefined {
+        let child1 = this.multiplicative(tokens);
+        let node = child1;
+        if (child1 !== undefined) {
+            while (true) {
+                let token = tokens.peek();
+                if (token !== null && (token.getType() === TokenType.Plus || token.getType() === TokenType.Minus)) {
+                    token = tokens.read(); // 消耗掉这个符号
+                    let child2 = this.multiplicative(tokens); // 计算下级节点
+                    if (child2 !== undefined) {
+                        node = new SimpleASTNode(ASTNodeType.Additive, token!.getText()); // 构造一个加法节点， node 始终记录根节点
+                        node.addChild(child1);
+                        node.addChild(child2);
+                        child1 = node; // 做为下一级节点的子结点？ 左结合性先计算这个 node,然后再计算 node 的父结点
+                    }
                 } else {
-                    throw new Error('invalid additive expression, expecting the right part.');
+                    break;
                 }
             }
         }
