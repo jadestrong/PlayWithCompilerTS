@@ -3,35 +3,7 @@ import ASTNodeType from './ASTNodeType';
 import { SimpleLexer } from './SimpleLexer';
 import { TokenReader} from './TokenReader';
 import { TokenType } from './TokenType';
-
-class SimpleASTNode implements ASTNode {
-    parent: ASTNode | undefined;
-    children: Array<ASTNode> = [];
-    readonlyChildren: ReadonlyArray<ASTNode> = this.children;
-
-    constructor(public nodeType:ASTNodeType, public text:string) {}
-
-    getParent() {
-        return this.parent!;
-    }
-
-    getChildren() {
-        return this.readonlyChildren as any;
-    }
-
-    getText() {
-        return this.text;
-    }
-
-    addChild(child: SimpleASTNode) {
-        this.children.push(child as any);
-        child.parent = this as any;
-    }
-
-    getType() {
-        return this.nodeType;
-    }
-}
+import SimpleASTNode from './SimpleASTNode';
 
 export class SimpleCalculator {
     /**
@@ -181,6 +153,7 @@ export class SimpleCalculator {
     // }
     /**
      * 采用尾递归解决结合性错误的问题
+     * additive ::= mul (+ mul)*
      * @return
      * @throws Error
      */
